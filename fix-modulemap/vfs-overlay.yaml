@@ -1,0 +1,16 @@
+{
+  "version": 0,
+  "roots": [
+    {
+      "name": "/Library/Developer/CommandLineTools/usr/include/swift",
+      "type": "directory",
+      "contents": [
+        {
+          "name": "module.modulemap",
+          "type": "file",
+          "external-contents": "/Users/pete/FloatTimer/fix-modulemap/module.modulemap"
+        }
+      ]
+    }
+  ]
+}
