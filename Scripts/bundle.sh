@@ -33,6 +33,11 @@ mkdir -p "${BUNDLE_DIR}/Contents/Resources"
 # Copy executable
 cp "${BUILD_DIR}/${APP_NAME}" "${BUNDLE_DIR}/Contents/MacOS/${APP_NAME}"
 
+# Copy app icon
+if [ -f "${SCRIPT_DIR}/Resources/AppIcon.icns" ]; then
+    cp "${SCRIPT_DIR}/Resources/AppIcon.icns" "${BUNDLE_DIR}/Contents/Resources/AppIcon.icns"
+fi
+
 # Write Info.plist
 cat > "${BUNDLE_DIR}/Contents/Info.plist" << 'PLIST'
 <?xml version="1.0" encoding="UTF-8"?>
@@ -52,6 +57,8 @@ cat > "${BUNDLE_DIR}/Contents/Info.plist" << 'PLIST'
     <string>1.0</string>
     <key>CFBundlePackageType</key>
     <string>APPL</string>
+    <key>CFBundleIconFile</key>
+    <string>AppIcon</string>
     <key>LSUIElement</key>
     <true/>
     <key>LSMinimumSystemVersion</key>

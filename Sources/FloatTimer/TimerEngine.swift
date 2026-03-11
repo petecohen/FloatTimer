@@ -68,6 +68,19 @@ class TimerEngine {
         timer = nil
         remaining = 0
         state = .idle
+        delegate?.timerDidTick(remaining: remaining)
+        delegate?.timerDidChangeState(state)
+    }
+
+    /// Reset the timer back to its original duration (or last used duration) without starting.
+    func reset() {
+        timer?.cancel()
+        timer = nil
+        let duration = totalDuration > 0 ? totalDuration : (Preferences.shared.lastDuration ?? 0)
+        totalDuration = duration
+        remaining = duration
+        state = .idle
+        delegate?.timerDidTick(remaining: remaining)
         delegate?.timerDidChangeState(state)
     }
 

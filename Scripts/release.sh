@@ -69,6 +69,12 @@ mkdir -p "${BUNDLE_DIR}/Contents/Resources"
 
 cp "${BINARY}" "${BUNDLE_DIR}/Contents/MacOS/${APP_NAME}"
 
+# Copy app icon if it exists
+if [ -f "${SCRIPT_DIR}/Resources/AppIcon.icns" ]; then
+    cp "${SCRIPT_DIR}/Resources/AppIcon.icns" "${BUNDLE_DIR}/Contents/Resources/AppIcon.icns"
+    echo "App icon copied."
+fi
+
 cat > "${BUNDLE_DIR}/Contents/Info.plist" << PLIST
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"

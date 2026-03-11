@@ -47,7 +47,7 @@ class HotKeyManager {
                 timerEngine.togglePauseResume()
             }
         } else if flags.rawValue == reset.modifiers && event.keyCode == reset.keyCode {
-            timerEngine.stop()
+            timerEngine.reset()
         } else if flags.rawValue == toggle.modifiers && event.keyCode == toggle.keyCode {
             if let panel = overlayPanel {
                 if panel.isVisible {

@@ -240,9 +240,7 @@ class TimerOverlayPanel: NSPanel, TimerEngineDelegate {
     }
 
     @objc private func resetTimer(_ sender: NSMenuItem) {
-        timerEngine.stop()
-        timeLabel.stringValue = "0:00"
-        timeLabel.textColor = Preferences.shared.textColor
+        timerEngine.reset()
     }
 
     @objc private func openPreferencesFromMenu(_ sender: NSMenuItem) {
@@ -323,7 +321,6 @@ class TimerOverlayPanel: NSPanel, TimerEngineDelegate {
         case .paused:
             timeLabel.textColor = textCol.withAlphaComponent(0.5)
         case .idle:
-            timeLabel.stringValue = "0:00"
             timeLabel.textColor = textCol
         }
     }
