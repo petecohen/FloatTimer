@@ -30,30 +30,34 @@ SOURCES=(
   Sources/FloatTimer/PreferencesWindow.swift
 )
 
-if swift build --version &>/dev/null && swift build -c release 2>/dev/null; then
-  echo "Using swift build (SPM)..."
-  BINARY=".build/release/${APP_NAME}"
-else
-  echo "SPM unavailable, using swiftc with workarounds..."
+# Always use swiftc directly for reliable cross-environment builds.
+# -swift-version 5 avoids Swift 6 strict concurrency errors on CI.
 
-  # Ensure VFS overlay exists
-  if [ ! -f "${SCRIPT_DIR}/fix-modulemap/vfs-overlay.yaml" ]; then
-    echo "Error: fix-modulemap/vfs-overlay.yaml not found"
-    exit 1
+EXTRA_FLAGS=()
+
+# Local workaround: VFS overlay for CLT modulemap conflict
+if [ -f "${SCRIPT_DIR}/fix-modulemap/vfs-overlay.yaml" ]; then
+  # Check if the overlay is actually needed (CLT vs Xcode)
+  if [ -d "/Library/Developer/CommandLineTools" ] && ! xcode-select -p 2>/dev/null | grep -q "Xcode.app"; then
+    EXTRA_FLAGS+=(
+      -Xfrontend -disable-deserialization-safety
+      -vfsoverlay "${SCRIPT_DIR}/fix-modulemap/vfs-overlay.yaml"
+      -Xcc -ivfsoverlay -Xcc "${SCRIPT_DIR}/fix-modulemap/vfs-overlay.yaml"
+    )
   fi
-
-  swiftc \
-    -O \
-    -o "${BUILD_DIR}/${APP_NAME}" \
-    -sdk "$(xcrun --show-sdk-path)" \
-    -target arm64-apple-macosx13.0 \
-    -Xfrontend -disable-deserialization-safety \
-    -vfsoverlay "${SCRIPT_DIR}/fix-modulemap/vfs-overlay.yaml" \
-    -Xcc -ivfsoverlay -Xcc "${SCRIPT_DIR}/fix-modulemap/vfs-overlay.yaml" \
-    "${SOURCES[@]}"
-
-  BINARY="${BUILD_DIR}/${APP_NAME}"
 fi
+
+echo "Building with swiftc..."
+swiftc \
+  -O \
+  -swift-version 5 \
+  -o "${BUILD_DIR}/${APP_NAME}" \
+  -sdk "$(xcrun --show-sdk-path)" \
+  -target arm64-apple-macosx13.0 \
+  "${EXTRA_FLAGS[@]}" \
+  "${SOURCES[@]}"
+
+BINARY="${BUILD_DIR}/${APP_NAME}"
 
 echo "Binary built at: ${BINARY}"
 
